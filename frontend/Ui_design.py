@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.media_windows = QtWidgets.QLabel(self.centralwidget)
-        self.media_windows.setGeometry(QtCore.QRect(0, -1, 540, 361))
+        self.media_windows.setGeometry(QtCore.QRect(0, 0, 540, 360))
         self.media_windows.setText("")
         self.media_windows.setObjectName("media_windows")
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
