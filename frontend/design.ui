@@ -54,7 +54,14 @@
      <item>
       <widget class="QPushButton" name="Button_load">
        <property name="text">
-        <string>Load</string>
+        <string>Load_local_data</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Button_receive">
+       <property name="text">
+        <string>receive in real time</string>
        </property>
       </widget>
      </item>

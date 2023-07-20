@@ -1,7 +1,7 @@
 import sys
 from frontend.Ui_design import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
-from PyQt5.QtCore import QTimer, QDir
+from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QImage, QPixmap
 from backend import utils
 
@@ -17,15 +17,16 @@ class UI_show(Ui_MainWindow, QMainWindow):
         self.windows = QLabel(self.media_windows)
         self.windows.setWindowTitle('media window')
         self.windows.setScaledContents(True)
+        self.windows.resize(540, 360)
         
         self.resources = utils.Resources_Manager()
+        self.resources.set_load_mode(1)
         
         self.Button_start.clicked.connect(self.timer_start)
         self.Button_pause.clicked.connect(self.timer_pause)
         self.Button_load.clicked.connect(self.load_resources)
         
-        # print(len(self.resources.image_list))
-        self.files_list.addItems(self.resources.get_image_list())
+        self.files_list.addItems(self.resources.get_list())
         self.files_list.show()
         
     def load_resources(self):
@@ -33,26 +34,29 @@ class UI_show(Ui_MainWindow, QMainWindow):
         item = self.files_list.currentItem()
         if item:
             target_name = item.text()
-        self.resources.load_image(index)
+        else:
+            self.massage.setText('no item selected')
+            return
+        self.resources.load(index)
         self.massage.setText(f'load target {target_name}')
         
     def timer_start(self):
         self.massage.setText('start playing')
-        self.media_timer.start(1000)
+        self.media_timer.start(20)
         
     def timer_pause(self):
         self.massage.setText('pause')
         self.media_timer.stop()
         
     def timer_stop(self):
-        self.resources.reset_image_loader()
+        print('timeout')
+        self.resources.reset()
         self.massage.setText('stop')
         self.media_timer.stop()
         
     def timer_timeout(self):
-        frame = self.resources.get_image_frame()
+        frame = self.resources.get_frame()
         if frame is not None:
-            print('load successfully', frame)
             self.windows.setPixmap(QPixmap.fromImage(QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)))
         else:
             self.timer_stop()
