@@ -3,35 +3,60 @@ import cv2
 import base64
 import numpy as np
 import json
+from queue import Queue
+import threading
 
-app = Flask(__name__)
+class Data_Receiver(object):
+    def __init__(self, maxQueueSize= 32):
+        self.app = Flask(__name__)
+        
+        self.INFO = {
+            'action' : '',
+            'timestamp': '',
+        }
+        
+        self.Queue_frame = Queue(maxsize= maxQueueSize)
+        self.Queue_info = Queue(maxsize= maxQueueSize)
+        
+        self.app_thread = None
+        
+        @self.app.route('/receive', methods=['POST'])
+        def receive_data():
+            self.INFO['action'] = request.get_json()['action']
+            self.INFO['timestamp'] = request.get_json()['timestamp']
 
-INFO = {
-    'action' : '',
-    'timestamp': '',
-}
+            image_base64 = request.get_json()['image_data']
+            image_data = base64.b64decode(image_base64)
+            image_array = cv2.imdecode(np.frombuffer(image_data, dtype=np.uint8), cv2.IMREAD_COLOR)
 
-@app.route('/receive', methods=['POST'])
-def receive_data():
-    INFO['action'] = request.get_json()['action']
-    INFO['timestamp'] = request.get_json()['timestamp']
+            # store data(test)
+            cv2.imwrite(f'./resources/img/{self.INFO["timestamp"]}.jpg', image_array)
+            with open(f'./resources/json/{self.INFO["timestamp"][:10]}.json', 'a') as f:
+                json.dump(self.INFO, f, indent=4)
+                f.write('\n')
+            
+            if not self.Queue_frame.full():
+                self.Queue_frame.put(image_array)
+            
+            if not self.Queue_info.full():
+                self.Queue_info.put(self.INFO.copy())
 
-    image_base64 = request.get_json()['image_data']
-    image_data = base64.b64decode(image_base64)
-    image_array = cv2.imdecode(np.frombuffer(image_data, dtype=np.uint8), cv2.IMREAD_COLOR)
-    
-    print('load')
-
-    # 保存图片
-    cv2.imwrite(f'./resources/img/{INFO["timestamp"]}.jpg', image_array)
-
-    # 保存json
-    json_name = INFO['timestamp'][:10]
-    with open(f'./resources/json/{json_name}.json', 'a') as f:
-        json.dump(INFO, f, indent=4)
-        f.write('\n')
-
-    return 'Received'
+            return 'Received'
+        
+    def get_data(self):
+        frame = None
+        info = None
+        if not self.Queue_frame.empty():
+            frame = self.Queue_frame.get_nowait()
+        if not self.Queue_info.empty():    
+            info = self.Queue_info.get_nowait()
+        return frame, info
+        
+    def start(self):
+        self.app_thread = threading.Thread(target= self.app.run, kwargs= {'host':'0.0.0.0', 'port':5001})
+        self.app_thread.start()
+        # self.app.run(host= '0.0.0.0', port= 5001)
 
 if __name__ == '__main__':
-    app.run(host= '0.0.0.0', port= 5001)
+    test = Data_Receiver()
+    test.start()

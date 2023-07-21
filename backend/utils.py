@@ -2,7 +2,6 @@ import cv2
 import os
 from glob import glob
 from typing import Optional
-from queue import Queue
 
 class Video(object):
     def __init__(self):
@@ -146,18 +145,6 @@ class Resources_Manager(object):
     def reset_video_loader(self):
         self.video_loader.set_init()
         
-class Receive_Manager(object):
-    def __init__(self, maxsize: int = 32):
-        self.Q = Queue(maxsize= 32)
-        
-    def get_frame(self):
-        if self.if_Queue_empty():
-            return None
-        return self.Q.get(False)
-    
-    def if_Queue_empty(self):
-        return self.Q.empty()
-    
         
 if __name__ == '__main__':
     
