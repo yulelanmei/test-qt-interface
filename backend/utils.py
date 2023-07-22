@@ -2,6 +2,8 @@ import cv2
 import os
 from glob import glob
 from typing import Optional
+import base64
+import numpy as np
 
 class Video(object):
     def __init__(self):
@@ -145,6 +147,11 @@ class Resources_Manager(object):
     def reset_video_loader(self):
         self.video_loader.set_init()
         
+def camera_stream_decode(image_base64):
+    image_data = base64.b64decode(image_base64)
+    image_array = cv2.imdecode(np.frombuffer(image_data, dtype= np.uint8), cv2.IMREAD_COLOR)        
+    image_array = cv2.cvtColor(image_array, cv2.COLOR_BGR2RGB)
+    return image_array
         
 if __name__ == '__main__':
     

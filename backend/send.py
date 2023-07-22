@@ -14,7 +14,7 @@ def send_data(image, dict):
     dict['image_data'] = image_base64
     
     # 发送 POST 请求
-    url = 'http://192.168.124.13:5001/receive'  # 替换为 Flask 服务器的 IP 地址和端口号
+    url = 'http://10.152.5.145:5001/receive'  # 替换为 Flask 服务器的 IP 地址和端口号
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, data=json.dumps(dict), headers=headers, timeout=30)
 
@@ -25,7 +25,7 @@ def send_data(image, dict):
         print('Failed to send data.')
 
 def main():
-    camera = cv2.VideoCapture(1)
+    camera = cv2.VideoCapture('./resources/videos/fall.mp4')
 
     while True:
         success, frame = camera.read()
@@ -36,7 +36,7 @@ def main():
         dict = {'action': 'fall', 'timestamp':time.strftime("%Y-%m-%d_%H_%M_%S", time.gmtime(time.time()+8*60*60))}
         send_data(frame, dict)
 
-        cv2.imshow("Camera", frame)
+        # cv2.imshow("Camera", frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

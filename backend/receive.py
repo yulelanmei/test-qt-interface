@@ -1,10 +1,8 @@
 from flask import Flask, request
-import cv2
-import base64
-import numpy as np
 import json
 from queue import Queue
 import threading
+from backend.utils import camera_stream_decode
 
 class Data_Receiver(object):
     def __init__(self, maxQueueSize= 32):
@@ -26,14 +24,13 @@ class Data_Receiver(object):
             self.INFO['timestamp'] = request.get_json()['timestamp']
 
             image_base64 = request.get_json()['image_data']
-            image_data = base64.b64decode(image_base64)
-            image_array = cv2.imdecode(np.frombuffer(image_data, dtype=np.uint8), cv2.IMREAD_COLOR)
+            image_array = camera_stream_decode(image_base64)
 
             # store data(test)
-            cv2.imwrite(f'./resources/img/{self.INFO["timestamp"]}.jpg', image_array)
-            with open(f'./resources/json/{self.INFO["timestamp"][:10]}.json', 'a') as f:
-                json.dump(self.INFO, f, indent=4)
-                f.write('\n')
+            # cv2.imwrite(f'./resources/img/{self.INFO["timestamp"]}.jpg', image_array)
+            # with open(f'./resources/json/{self.INFO["timestamp"][:10]}.json', 'a') as f:
+            #     json.dump(self.INFO, f, indent=4)
+            #     f.write('\n')
             
             if not self.Queue_frame.full():
                 self.Queue_frame.put(image_array)
@@ -54,6 +51,7 @@ class Data_Receiver(object):
         
     def start(self):
         self.app_thread = threading.Thread(target= self.app.run, kwargs= {'host':'0.0.0.0', 'port':5001})
+        self.app_thread.setDaemon(True)
         self.app_thread.start()
         # self.app.run(host= '0.0.0.0', port= 5001)
 
