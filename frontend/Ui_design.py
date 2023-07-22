@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\VScode Python\Human_Remover\the_olds_defender\frontend\design.ui'
+# Form implementation generated from reading ui file 'c:\Users\abado\Downloads\test-qt-interface-master\frontend\design.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -74,11 +74,20 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab_2, "")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
+        self.verticalLayoutWidget = QtWidgets.QWidget(self.tab)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 1051, 671))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.info_tbview = QtWidgets.QTableView(self.verticalLayoutWidget)
+        self.info_tbview.setObjectName("info_tbview")
+        self.verticalLayout.addWidget(self.info_tbview)
         self.tabWidget.addTab(self.tab, "")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
