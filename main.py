@@ -3,7 +3,7 @@ from frontend.Ui_design import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage, QPixmap
-from backend.utils import Resources_Manager
+from backend.utils import Resources_Manager, MyTableModel
 from backend.receive import Data_Receiver
 from qt_material import apply_stylesheet
 
@@ -40,11 +40,17 @@ class UI_show(Ui_MainWindow, QMainWindow):
         
         self.files_list.addItems(self.resources.get_list())
         self.files_list.show()
+
+        # init info table
+        self.info_data = []
+        headers = ['action', 'timestamp']
+        self.table_model = MyTableModel(self.info_data, headers)
+        self.info_tbview.setModel(self.table_model)
         
     def start_get_stream_data(self):
         self.stream.start()
         self.media_timer2.timeout.connect(self.timer_timeout_stream)
-        self.media_timer2.start(20)
+        self.media_timer2.start(10)
         self.massage2.setText('waiting for camera data...')
     
     def timer_timeout_stream(self):
@@ -55,6 +61,8 @@ class UI_show(Ui_MainWindow, QMainWindow):
         if info is not None:
             massage = ''.join(info['action'] + '\n' + info['timestamp'])
             self.massage2.setText(massage)
+            self.info_data.append((info['action'], info['timestamp']))
+            self.table_model.updateData(self.info_data)
         
     def load_resources(self):
         self.media_timer.timeout.connect(self.timer_timeout_resources)
