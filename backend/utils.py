@@ -4,6 +4,7 @@ from glob import glob
 from typing import Optional
 import base64
 import numpy as np
+from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
 
 class Video(object):
     def __init__(self):
@@ -146,7 +147,36 @@ class Resources_Manager(object):
         
     def reset_video_loader(self):
         self.video_loader.set_init()
-        
+
+
+class MyTableModel(QAbstractTableModel):
+    def __init__(self, data=[], headers=[]):
+        super().__init__()
+        self._data = data
+        self._headers = headers
+
+    def rowCount(self, parent=None):
+        return len(self._data)
+
+    def columnCount(self, parent=None):
+        return len(self._headers)
+
+    def data(self, index, role=Qt.DisplayRole):
+        if role == Qt.DisplayRole:
+            return str(self._data[index.row()][index.column()])
+        return QVariant()
+
+    def headerData(self, section, orientation, role=Qt.DisplayRole):
+        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+            return self._headers[section]
+        return QVariant()
+
+    def updateData(self, new_data):
+        self.beginResetModel()
+        self._data = new_data
+        self.endResetModel()
+
+
 def camera_stream_decode(image_base64):
     image_data = base64.b64decode(image_base64)
     image_array = cv2.imdecode(np.frombuffer(image_data, dtype= np.uint8), cv2.IMREAD_COLOR)        
