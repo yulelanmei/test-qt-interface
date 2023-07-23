@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\abado\Downloads\test-qt-interface-master\frontend\design.ui'
+# Form implementation generated from reading ui file 'd:\Project\test_qt\frontend\design.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -74,15 +74,15 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab_2, "")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
-        self.verticalLayoutWidget = QtWidgets.QWidget(self.tab)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 1051, 671))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.info_tbview = QtWidgets.QTableView(self.verticalLayoutWidget)
+        self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.tab)
+        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(10, 10, 1051, 671))
+        self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_2)
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.info_tbview = QtWidgets.QTableView(self.horizontalLayoutWidget_2)
         self.info_tbview.setObjectName("info_tbview")
-        self.verticalLayout.addWidget(self.info_tbview)
+        self.horizontalLayout_2.addWidget(self.info_tbview)
         self.tabWidget.addTab(self.tab, "")
         MainWindow.setCentralWidget(self.centralwidget)
 

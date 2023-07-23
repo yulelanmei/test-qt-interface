@@ -1,10 +1,12 @@
 import sys
+import pandas as pd
 from frontend.Ui_design import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage, QPixmap
-from backend.utils import Resources_Manager, MyTableModel
+from backend.utils import Resources_Manager
 from backend.receive import Data_Receiver
+from backend.chart import MyPieChart, MyTableModel
 from qt_material import apply_stylesheet
 
 class UI_show(Ui_MainWindow, QMainWindow):
@@ -42,10 +44,14 @@ class UI_show(Ui_MainWindow, QMainWindow):
         self.files_list.show()
 
         # init info table
-        self.info_data = []
-        headers = ['action', 'timestamp']
+        headers = ['action', 'timestamp']  # more info need to add
+        self.info_data = pd.DataFrame(columns=headers)
         self.table_model = MyTableModel(self.info_data, headers)
         self.info_tbview.setModel(self.table_model)
+
+        # init pie chart
+        self.pie_chart = MyPieChart()
+        self.horizontalLayout_2.addWidget(self.pie_chart.chart_view)
         
     def start_get_stream_data(self):
         self.stream.start()
@@ -59,10 +65,9 @@ class UI_show(Ui_MainWindow, QMainWindow):
         if frame is not None:
             self.set_window2_show(frame)
         if info is not None:
-            massage = ''.join(info['action'] + '\n' + info['timestamp'])
+            massage = ''.join(str(info['action']) + '\n' + info['timestamp'])
             self.massage2.setText(massage)
-            self.info_data.append((info['action'], info['timestamp']))
-            self.table_model.updateData(self.info_data)
+            self.update_info(info)
         
     def load_resources(self):
         self.media_timer.timeout.connect(self.timer_timeout_resources)
@@ -101,6 +106,16 @@ class UI_show(Ui_MainWindow, QMainWindow):
 
     def set_window2_show(self, frame):
         self.media_windows2.setPixmap(QPixmap.fromImage(QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)))
+
+    def update_info(self, info):
+        new_data = pd.DataFrame(info, index=[0])
+
+        self.info_data = pd.concat([self.info_data, new_data], ignore_index=True).dropna()
+        self.table_model.updateData(self.info_data)
+
+        action_counts = self.info_data['action'].value_counts().items()
+        self.pie_chart.update_data(action_counts)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
