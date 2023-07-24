@@ -44,7 +44,8 @@ class UI_show(Ui_MainWindow, QMainWindow):
         self.files_list.show()
 
         # init info table
-        headers = ['action', 'timestamp']  # more info need to add
+        # headers = ['action', 'timestamp', 'gait', 'squat_count', 'situp-count']  # more info need to add
+        headers = ['action', 'timestamp', 'gait', 'squat_count', 'situp_count']
         self.info_data = pd.DataFrame(columns=headers)
         self.table_model = MyTableModel(self.info_data, headers)
         self.info_tbview.setModel(self.table_model)
@@ -67,6 +68,7 @@ class UI_show(Ui_MainWindow, QMainWindow):
         if info is not None:
             massage = ''.join(str(info['action']) + '\n' + info['timestamp'])
             self.massage2.setText(massage)
+            print(info)
             self.update_info(info)
         
     def load_resources(self):
@@ -109,11 +111,13 @@ class UI_show(Ui_MainWindow, QMainWindow):
 
     def update_info(self, info):
         new_data = pd.DataFrame(info, index=[0])
+        print(new_data)
 
-        self.info_data = pd.concat([self.info_data, new_data], ignore_index=True).dropna()
+        self.info_data = pd.concat([self.info_data, new_data], ignore_index=True)
+        print(self.info_data.shape)
         self.table_model.updateData(self.info_data)
 
-        action_counts = self.info_data['action'].value_counts().items()
+        action_counts = self.info_data['action'].value_counts()
         self.pie_chart.update_data(action_counts)
 
 

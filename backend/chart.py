@@ -11,28 +11,36 @@ class MyPieChart(QWidget):
         super().__init__()
         self.series = QPieSeries()
         self.chart = QChart()
-        self.series.setLabelsVisible(True)
-        self.chart.legend().hide()
+        self.series.setLabelsPosition(QPieSlice.LabelPosition.LabelOutside)  # 设置标签显示位置。outside表示显示在饼图外围
+        # self.series.setLabelsPosition(QPieSlice.LabelInsideHorizontal)
+        self.series.setLabelsVisible(True)   # 显示饼图标签
+        self.chart.legend().hide()   # 隐藏图例
         self.chart.addSeries(self.series)
-        self.chart.createDefaultAxes()
+        # self.chart.createDefaultAxes()
         # self.chart.setAnimationOptions(QChart.SeriesAnimations)
         self.chart.setTitle(title)
 
-        self.chart.legend().setVisible(True)
-        self.chart.legend().setAlignment(Qt.AlignBottom)
+        # self.chart.legend().setVisible(True)
+        # self.chart.legend().setAlignment(Qt.AlignBottom)
+        
 
+        # self.chart.legend().show()  # 显示图例
         self.chart_view = QChartView(self.chart)
         self.chart_view.setRenderHint(QPainter.Antialiasing)
 
-        self.layout = QVBoxLayout(self)
-        self.layout.addWidget(self.chart_view)
+        # self.layout = QVBoxLayout(self)
+        # self.layout.addWidget(self.chart_view)
 
     
     def update_data(self, data):
         self.series.clear()
 
-        for key, value in data:
+        for key, value in data.items():
             self.series.append(key, int(value))
+        
+        for slice in self.series.slices():
+            slice.setLabel(f'{slice.label()} - {100 * slice.percentage():.1f}%')
+            slice.setLabelVisible(True)  # 使用clear后，标签显示会失效，需要重新配置
         
         self.chart_view.chart().update()
 

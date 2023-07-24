@@ -11,6 +11,9 @@ class Data_Receiver(object):
         self.INFO = {
             'action' : '',
             'timestamp': '',
+            "gait" : '',#正常步态或者摔倒状态
+            "squat_count" : 0,#深蹲计数
+            "situp_count" : 0,#仰卧起坐计数
         }
         
         self.Queue_frame = Queue(maxsize= maxQueueSize)
@@ -22,6 +25,9 @@ class Data_Receiver(object):
         def receive_data():
             self.INFO['action'] = request.get_json()['action']
             self.INFO['timestamp'] = request.get_json()['timestamp']
+            self.INFO['gait'] = request.get_json()['gait']
+            self.INFO['squat_count'] = request.get_json()['squat_count']
+            self.INFO['situp_count'] = request.get_json()['situp_count']
 
             image_base64 = request.get_json()['image_data']
             image_array = camera_stream_decode(image_base64)
