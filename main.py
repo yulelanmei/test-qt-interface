@@ -8,6 +8,7 @@ from backend.utils import Resources_Manager
 from backend.receive import Data_Receiver
 from backend.chart import MyPieChart, MyTableModel
 from qt_material import apply_stylesheet
+from PyQt5.QtWidgets import QMessageBox
 
 class UI_show(Ui_MainWindow, QMainWindow):
     def __init__(self, parent= None):
@@ -53,6 +54,11 @@ class UI_show(Ui_MainWindow, QMainWindow):
         # init pie chart
         self.pie_chart = MyPieChart()
         self.horizontalLayout_2.addWidget(self.pie_chart.chart_view)
+
+        self.msg_box = QMessageBox(self)
+        self.msg_box.setIcon(QMessageBox.Warning)
+        self.msg_box.setWindowTitle("警告")
+        self.setWindowModality(0)
         
     def start_get_stream_data(self):
         self.stream.start()
@@ -118,6 +124,11 @@ class UI_show(Ui_MainWindow, QMainWindow):
         self.table_model.updateData(self.info_data)
 
         action_counts = self.info_data['action'].value_counts()
+        action_list = action_counts.index.tolist()
+        if 'FallDown' in action_list:
+            # QMessageBox.warning(self, "警告", "检测到有人摔倒！！")
+            self.msg_box.setText("检测到有人摔倒！！")
+            self.msg_box.show()
         self.pie_chart.update_data(action_counts)
 
 
